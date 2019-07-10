@@ -54,14 +54,30 @@
 		6486E0C322D5B6C000A3F6F2 /* IMScrollPageView */ = {
 			isa = PBXGroup;
 			children = (
+				6486E0D622D5B83100A3F6F2 /* IMScrollPageViewLib */,
 				6486E0C422D5B6C000A3F6F2 /* AppDelegate.swift */,
 				6486E0C622D5B6C000A3F6F2 /* ViewController.swift */,
-				6486E0C822D5B6C000A3F6F2 /* Main.storyboard */,
-				6486E0CB22D5B6C100A3F6F2 /* Assets.xcassets */,
-				6486E0CD22D5B6C100A3F6F2 /* LaunchScreen.storyboard */,
-				6486E0D022D5B6C100A3F6F2 /* Info.plist */,
+				6486E0D822D5B88C00A3F6F2 /* System File */,
 			);
 			path = IMScrollPageView;
+			sourceTree = "<group>";
+		};
+		6486E0D622D5B83100A3F6F2 /* IMScrollPageViewLib */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = IMScrollPageViewLib;
+			sourceTree = "<group>";
+		};
+		6486E0D822D5B88C00A3F6F2 /* System File */ = {
+			isa = PBXGroup;
+			children = (
+				6486E0C822D5B6C000A3F6F2 /* Main.storyboard */,
+				6486E0CD22D5B6C100A3F6F2 /* LaunchScreen.storyboard */,
+				6486E0CB22D5B6C100A3F6F2 /* Assets.xcassets */,
+				6486E0D022D5B6C100A3F6F2 /* Info.plist */,
+			);
+			name = "System File";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -285,6 +301,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = WN65XWFSMX;
 				INFOPLIST_FILE = IMScrollPageView/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -303,6 +320,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = WN65XWFSMX;
 				INFOPLIST_FILE = IMScrollPageView/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
