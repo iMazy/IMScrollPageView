@@ -12,6 +12,11 @@
 		6486E0CA22D5B6C000A3F6F2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6486E0C822D5B6C000A3F6F2 /* Main.storyboard */; };
 		6486E0CC22D5B6C100A3F6F2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6486E0CB22D5B6C100A3F6F2 /* Assets.xcassets */; };
 		6486E0CF22D5B6C100A3F6F2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6486E0CD22D5B6C100A3F6F2 /* LaunchScreen.storyboard */; };
+		6486E0DA22D5B96600A3F6F2 /* IMContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6486E0D922D5B96600A3F6F2 /* IMContentView.swift */; };
+		6486E0DC22D5B98400A3F6F2 /* IMScrollPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6486E0DB22D5B98400A3F6F2 /* IMScrollPageView.swift */; };
+		6486E0DE22D5B99800A3F6F2 /* IMScrollSegmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6486E0DD22D5B99800A3F6F2 /* IMScrollSegmentView.swift */; };
+		6486E0E022D5B9B900A3F6F2 /* IMSegmentStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6486E0DF22D5B9B900A3F6F2 /* IMSegmentStyle.swift */; };
+		6486E0E222D5B9DB00A3F6F2 /* UIViewController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6486E0E122D5B9DB00A3F6F2 /* UIViewController+Extension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +27,11 @@
 		6486E0CB22D5B6C100A3F6F2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6486E0CE22D5B6C100A3F6F2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6486E0D022D5B6C100A3F6F2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6486E0D922D5B96600A3F6F2 /* IMContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IMContentView.swift; sourceTree = "<group>"; };
+		6486E0DB22D5B98400A3F6F2 /* IMScrollPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IMScrollPageView.swift; sourceTree = "<group>"; };
+		6486E0DD22D5B99800A3F6F2 /* IMScrollSegmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IMScrollSegmentView.swift; sourceTree = "<group>"; };
+		6486E0DF22D5B9B900A3F6F2 /* IMSegmentStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IMSegmentStyle.swift; sourceTree = "<group>"; };
+		6486E0E122D5B9DB00A3F6F2 /* UIViewController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extension.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +75,11 @@
 		6486E0D622D5B83100A3F6F2 /* IMScrollPageViewLib */ = {
 			isa = PBXGroup;
 			children = (
+				6486E0D922D5B96600A3F6F2 /* IMContentView.swift */,
+				6486E0DB22D5B98400A3F6F2 /* IMScrollPageView.swift */,
+				6486E0DD22D5B99800A3F6F2 /* IMScrollSegmentView.swift */,
+				6486E0DF22D5B9B900A3F6F2 /* IMSegmentStyle.swift */,
+				6486E0E122D5B9DB00A3F6F2 /* UIViewController+Extension.swift */,
 			);
 			path = IMScrollPageViewLib;
 			sourceTree = "<group>";
@@ -153,6 +168,11 @@
 			files = (
 				6486E0C722D5B6C000A3F6F2 /* ViewController.swift in Sources */,
 				6486E0C522D5B6C000A3F6F2 /* AppDelegate.swift in Sources */,
+				6486E0DE22D5B99800A3F6F2 /* IMScrollSegmentView.swift in Sources */,
+				6486E0E022D5B9B900A3F6F2 /* IMSegmentStyle.swift in Sources */,
+				6486E0E222D5B9DB00A3F6F2 /* UIViewController+Extension.swift in Sources */,
+				6486E0DC22D5B98400A3F6F2 /* IMScrollPageView.swift in Sources */,
+				6486E0DA22D5B96600A3F6F2 /* IMContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
