@@ -10,4 +10,14 @@ import UIKit
 
 extension UIViewController {
     
+    public weak var imScrollPageController: UIViewController? {
+        get {
+            var superVC = self.parent
+            while superVC != nil {
+//                if superVC is Contiguous
+                superVC = superVC?.parent
+            }
+            return superVC
+        }
+    }
 }

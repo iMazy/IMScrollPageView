@@ -13,7 +13,7 @@ public struct IMSegmentStyle {
     /// 是否显示遮盖
     public var isShowCover: Bool = false
     /// 是否显示下划线
-    public var isShowBottonLine: Bool = false
+    public var isShowScrollLine: Bool = false
     /// 是否缩放文字
     public var isTitleScale: Bool = false
     /// 是否可以滚动标题
