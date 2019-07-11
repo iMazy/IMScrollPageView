@@ -21,11 +21,11 @@ public class IMScrollSegmentView: UIView {
     
     private var xGap: Int = 5
     
-    private var wWap: Int {
+    private var wGap: Int {
         return 2 * xGap
     }
     
-    private var labelsArray: [UILabel] = []
+    private var labelsArray: [IMCustomLabel] = []
     private var currentIndex: Int = 0
     private var oldIndex: Int = 0
     private var titlesWidthArray: [CGFloat] = []
@@ -93,7 +93,7 @@ public class IMScrollSegmentView: UIView {
         }
     }()
     
-    private lazy var rebDelta: (deltaR: CGFloat, deltaG: CGFloat, deltaB: CGFloat) = {
+    private lazy var rgbDelta: (deltaR: CGFloat, deltaG: CGFloat, deltaB: CGFloat) = {
         let normalColorRgb = self.normalColorRGB
         let selectColorRgb = self.selectedTitleColorRGB
         let deltaR = normalColorRGB.r - selectColorRgb.r
@@ -130,7 +130,275 @@ public class IMScrollSegmentView: UIView {
         
     }
     
+    @objc func titleLabelClickAction(tapGesture: UITapGestureRecognizer) {
+        guard let currentLabel = tapGesture.view else { return }
+        currentIndex = currentLabel.tag
+        
+        
+    }
+    
+    func extraButtonClickAction(sender: UIButton) {
+        extraButtonClickClosure?(sender)
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension IMScrollSegmentView {
+    private func setupTitles() {
+        for (index, title) in titles.enumerated() {
+            
+            let label = IMCustomLabel(frame: .zero)
+            label.tag = index
+            label.text = title
+            label.textColor = segmentStyle.titleNormalColor
+            label.font = segmentStyle.titleFont
+            label.textAlignment = .center
+            label.isUserInteractionEnabled = true
+            
+            // 添加点击手势
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.titleLabelClickAction(tapGesture:)))
+            label.addGestureRecognizer(tapGesture)
+            
+            // 计算文字尺寸
+            let size = (title as NSString).boundingRect(with: CGSize(width: CGFloat(MAXFLOAT), height: 0.0), options: .usesLineFragmentOrigin, attributes: [NSAttributedString.Key.font: label.font], context: nil)
+            // 缓存文字宽度
+            titlesWidthArray.append(size.width)
+            // 缓存label
+            labelsArray.append(label)
+            // 添加label
+            scrollView.addSubview(label)
+        }
+    }
+    
+    private func setupUI() {
+        // 设置extra按钮
+        setupScrollViewAndExtraButton()
+        // 先设置label的位置
+        setupLabelsPosition()
+        // 再设置滚动条和cover的位置
+        setupScrollLineViewAndConver()
+        
+        if segmentStyle.isTitleScroll { // 设置滚动区域
+            if let lastLabel = labelsArray.last {
+                scrollView.contentSize = CGSize(width: lastLabel.frame.maxX + segmentStyle.titleMargin, height: 0)
+            }
+        }
+    }
+    
+    private func setupScrollViewAndExtraButton() {
+        currentWidth = self.bounds.width
+        let extraButtonW: CGFloat = 44.0
+        let extraButtonY: CGFloat = 5.0
+        let scrollWidth = extraButton == nil ? currentWidth : currentWidth - extraButtonW
+        scrollView.frame = CGRect(x: 0, y: 0, width: scrollWidth, height: bounds.size.height)
+        extraButton?.frame = CGRect(x: scrollWidth, y: extraButtonY, width: extraButtonW, height: bounds.size.height  - extraButtonY * 2)
+    }
+    
+    private func setupLabelsPosition() {
+        var titleX: CGFloat = 0
+        let titleY: CGFloat = 0
+        var titleW: CGFloat = 0
+        let titleH: CGFloat = bounds.size.width - segmentStyle.bottomLineHeight
+        
+        if !segmentStyle.isTitleScroll { // 标题不能滚动, 平分宽度
+            titleW = currentWidth / CGFloat(titles.count)
+            
+            for (index, label) in labelsArray.enumerated() {
+                titleX = CGFloat(index) * titleW
+                label.frame = CGRect(x: titleX, y: titleY, width: titleW, height: titleH)
+            }
+        } else {
+            for (index, label) in labelsArray.enumerated() {
+                titleW = titlesWidthArray[index]
+                titleX = segmentStyle.titleMargin
+                if index != 0 {
+                    let lastLabel = labelsArray[index - 1]
+                    titleX = (lastLabel.frame.maxX) + segmentStyle.titleMargin
+                }
+                label.frame = CGRect(x: titleX, y: titleY, width: titleW, height: titleH)
+            }
+        }
+        
+        if let firstLabel = labelsArray.first {
+            // 缩放, 设置初始的label的transform
+            if segmentStyle.isTitleScale {
+                firstLabel.currentTransformScale = segmentStyle.titleBigScale
+            }
+            // 设置初始状态文字的颜色
+            firstLabel.textColor = segmentStyle.titleSelectColor
+        }
+    }
+    
+    private func setupScrollLineViewAndConver() {
+        if let line = scrollLine {
+            line.backgroundColor = segmentStyle.bottomLineColor
+            scrollView.addSubview(line)
+        }
+        if let cover = coverLayer {
+            cover.backgroundColor = segmentStyle.coverBackgroundColor
+            scrollView.insertSubview(cover, at: 0)
+        }
+        let coverX = labelsArray[0].frame.origin.x
+        let coverW = labelsArray[0].frame.size.width
+        let coverH: CGFloat = segmentStyle.coverHeight
+        let coverY = (bounds.size.height - coverH) / 2
+        if segmentStyle.isTitleScroll {
+            // 这里x-xGap width+wGap 是为了让遮盖的左右边缘和文字有一定的距离
+            coverLayer?.frame = CGRect(x: coverX - CGFloat(xGap), y: coverY, width: coverW + CGFloat(wGap), height: coverH)
+        } else {
+            coverLayer?.frame = CGRect(x: coverX, y: coverY, width: coverW, height: coverH)
+        }
+        
+        scrollLine?.frame = CGRect(x: coverX, y: bounds.size.height - segmentStyle.bottomLineHeight, width: coverW, height: segmentStyle.bottomLineHeight)
+    }
+}
+
+extension IMScrollSegmentView {
+    
+    public func adjuctUIWhenButtonClick(animated: Bool) {
+        if currentIndex == oldIndex { return }
+        let oldLabel = labelsArray[oldIndex]
+        let currentLabel = labelsArray[currentIndex]
+        
+        adjustTitleOffSetToCurrentIndex(currentIndex)
+        
+        let animationDuration = animated ? 0.3 : 0.0
+        UIView.animate(withDuration: animationDuration) {
+            // 设置文字颜色
+            oldLabel.textColor = self.segmentStyle.titleSelectColor
+            currentLabel.textColor = self.segmentStyle.titleSelectColor
+            
+            // 缩放文字
+            if self.segmentStyle.isTitleScale {
+                oldLabel.currentTransformScale = self.segmentStyle.titleOriginalScale
+                currentLabel.currentTransformScale = self.segmentStyle.titleBigScale
+            }
+            
+            // 设置滚动条的位置
+            self.scrollLine?.frame.origin.x = currentLabel.frame.origin.x
+            // 注意, 通过bounds 获取到的width 是没有进行transform之前的 所以使用frame
+            self.scrollLine?.frame.size.width = currentLabel.frame.size.width
+            
+            // 设置遮盖位置
+            if self.segmentStyle.isTitleScroll {
+                self.coverLayer?.frame.origin.x = currentLabel.frame.origin.x - CGFloat(self.xGap)
+                self.coverLayer?.frame.size.width = currentLabel.frame.size.width + CGFloat(self.wGap)
+            } else {
+                self.coverLayer?.frame.origin.x = currentLabel.frame.origin.x
+                self.coverLayer?.frame.size.width = currentLabel.frame.size.width
+            }
+        }
+        oldIndex = currentIndex
+        titleButtonClickClosure?(currentLabel, currentIndex)
+    }
+    
+    // 手动滚动时需要提供动画效果
+    public func adjustUIWithProgress(_ progress: CGFloat, oldIndex: Int, currentIndex: Int) {
+        // 记录当前的currentIndex以便于在点击的时候处理
+        self.oldIndex = oldIndex
+        
+        let oldLabel = labelsArray[oldIndex]
+        let currentLabel = labelsArray[currentIndex]
+        
+        // 从一个label滚动到另一个label 需要改变的总的距离 和 总的宽度
+        let xDistance = currentLabel.frame.origin.x - oldLabel.frame.origin.x
+        let wDistance = currentLabel.frame.size.width - oldLabel.frame.size.width
+        
+        // 设置滚动条位置 = 最初的位置 + 改变的总距离 * 进度
+        scrollLine?.frame.origin.x = oldLabel.frame.origin.x + xDistance * progress
+        // 设置滚动条宽度 = 最初的宽度 + 改变的总宽度 * 进度
+        scrollLine?.frame.size.width = oldLabel.frame.size.width + wDistance * progress
+        
+        // 设置 cover 位置
+        if segmentStyle.isTitleScroll {
+            coverLayer?.frame.origin.x = oldLabel.frame.origin.x + xDistance * progress - CGFloat(xGap)
+            coverLayer?.frame.size.width = oldLabel.frame.size.width + wDistance * progress + CGFloat(wGap)
+        } else {
+            coverLayer?.frame.origin.x = oldLabel.frame.origin.x + xDistance * progress
+            coverLayer?.frame.size.width = oldLabel.frame.size.width + wDistance * progress
+        }
+        
+        // 文字颜色渐变
+        if segmentStyle.isChangeTitleColorGradual {
+            oldLabel.textColor = UIColor(red: selectedTitleColorRGB.r + rgbDelta.deltaR * progress, green: selectedTitleColorRGB.g + rgbDelta.deltaG * progress, blue: selectedTitleColorRGB.b + rgbDelta.deltaB * progress, alpha: 1.0)
+            
+            currentLabel.textColor =  UIColor(red: normalColorRGB.r - rgbDelta.deltaR * progress, green: normalColorRGB.g - rgbDelta.deltaG * progress, blue: normalColorRGB.b - rgbDelta.deltaB * progress, alpha: 1.0)
+        }
+        
+        // 缩放文字
+        if !segmentStyle.isTitleScale {
+            return
+        }
+        
+        // 注意左右间的比例是相关连的, 加减相同
+        // 设置文字缩放
+        let deltaScale = (segmentStyle.titleBigScale - segmentStyle.titleOriginalScale)
+        oldLabel.currentTransformScale = segmentStyle.titleBigScale - deltaScale * progress
+        currentLabel.currentTransformScale = segmentStyle.titleOriginalScale + deltaScale * progress
+    }
+    
+    // 居中显示title
+    public func adjustTitleOffSetToCurrentIndex(_ index: Int) {
+        let currentLabel = labelsArray[index]
+        labelsArray.enumerated().forEach { [unowned self] in
+            if $0.offset != index {
+                $0.element.textColor = self.segmentStyle.titleNormalColor
+            }
+        }
+        // 目标是让currentLabel居中显示
+        var offsetX = currentLabel.center.x - currentWidth / 2
+        if offsetX < 0 {
+            offsetX = 0
+        }
+        // considering the exist of extraButton
+        let extraButtonW = extraButton?.frame.size.width ?? 0.0
+        var maxOffsetX = scrollView.contentSize.width - (currentWidth - extraButtonW)
+        
+        // 可以滚动的区域小余屏幕宽度
+        if maxOffsetX < 0 {
+            maxOffsetX = 0
+        }
+        
+        if offsetX > maxOffsetX {
+            offsetX = maxOffsetX
+        }
+        
+        scrollView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: true)
+        
+        // 没有渐变效果的时候设置切换title时的颜色
+        if !segmentStyle.isChangeTitleColorGradual {
+            for (index, label) in labelsArray.enumerated() {
+                if index == currentIndex {
+                    label.textColor = segmentStyle.titleSelectColor
+                } else {
+                    label.textColor = segmentStyle.titleNormalColor
+                }
+            }
+        }
+    }
+}
+
+extension IMScrollSegmentView {
+    public func selectedIndex(_ index: Int, animated: Bool) {
+        if index < 0 || index >= titles.count {
+            return
+        }
+        currentIndex = index
+        adjuctUIWhenButtonClick(animated: true)
+    }
+}
+
+
+/// custom label
+public class IMCustomLabel: UILabel {
+    
+    /// 用来记录当前label的缩放比例
+    public var currentTransformScale: CGFloat = 1.0 {
+        didSet {
+            transform = CGAffineTransform(scaleX: currentTransformScale, y: currentTransformScale)
+        }
     }
 }
