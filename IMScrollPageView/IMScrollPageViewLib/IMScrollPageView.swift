@@ -10,12 +10,15 @@ import UIKit
 
 class IMScrollPageView: UIView {
 
-    /*
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func draw(_ rect: CGRect) {
-        // Drawing code
+    static let cellID: String = "cellId"
+    public var segmentStyle = IMSegmentStyle()
+    
+    public var extraButtonOnClick: ((_ extraButton: UIButton) -> Void)? {
+        didSet {
+           segmentView.extraButtonClickClosure = extraButtonOnClick
+        }
     }
-    */
 
+    private var segmentView: IMScrollSegmentView!
+//    private var contentView: c
 }

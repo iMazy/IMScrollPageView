@@ -14,10 +14,11 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         var style = IMSegmentStyle()
-        style.bottomLineHeight = 1
+        style.bottomLineHeight = 2
         style.isTitleScroll = true
         style.titleMargin = 20
-        let segmentTitleView = IMScrollSegmentView(frame: CGRect(x: 0, y: 100, width: 375, height: 40), titles: ["首页", "电影", "话剧"], segmentStyle: style)
+        style.isShowScrollLine = true
+        let segmentTitleView = IMScrollSegmentView(frame: CGRect(x: 0, y: 100, width: 375, height: 40), titles: ["首页", "电影", "话剧", "三个字", "hello world"], segmentStyle: style)
         view.addSubview(segmentTitleView)
     }
 
