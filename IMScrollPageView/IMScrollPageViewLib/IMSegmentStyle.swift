@@ -20,7 +20,7 @@ public struct IMSegmentStyle {
     public var isTitleScroll: Bool = true
     /// 是否颜色渐变
     public var isChangeTitleColorGradual: Bool = false
-    /// 是否显示附加的按钮
+    /// 是否显示附加的按钮 默认为false
     public var isShowExtraButton: Bool = false
     /// 点击title切换内容的时候是否有动画 默认为true
     public var isAnimatedChangeContent: Bool = true

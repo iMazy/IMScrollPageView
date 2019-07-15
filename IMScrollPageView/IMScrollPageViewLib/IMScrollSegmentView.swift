@@ -121,20 +121,25 @@ public class IMScrollSegmentView: UIView {
         self.titles = titles
         super.init(frame: frame)
         
+        if !segmentStyle.isTitleScroll {
+            self.segmentStyle.isTitleScale = !(segmentStyle.isShowCover || segmentStyle.isShowScrollLine)
+        }
+        
         addSubview(scrollView)
         
         if let extraBtn = extraButton {
             addSubview(extraBtn)
         }
         
-        
+        setupTitles()
+        setupUI()
     }
     
     @objc func titleLabelClickAction(tapGesture: UITapGestureRecognizer) {
-        guard let currentLabel = tapGesture.view else { return }
+        guard let currentLabel = tapGesture.view as? IMCustomLabel else { return }
         currentIndex = currentLabel.tag
-        
-        
+
+        adjuctUIWhenButtonClick(animated: true)
     }
     
     func extraButtonClickAction(sender: UIButton) {
@@ -147,6 +152,7 @@ public class IMScrollSegmentView: UIView {
 }
 
 extension IMScrollSegmentView {
+    
     private func setupTitles() {
         for (index, title) in titles.enumerated() {
             
@@ -198,10 +204,11 @@ extension IMScrollSegmentView {
     }
     
     private func setupLabelsPosition() {
+        
         var titleX: CGFloat = 0
         let titleY: CGFloat = 0
         var titleW: CGFloat = 0
-        let titleH: CGFloat = bounds.size.width - segmentStyle.bottomLineHeight
+        let titleH: CGFloat = bounds.size.height - segmentStyle.bottomLineHeight
         
         if !segmentStyle.isTitleScroll { // 标题不能滚动, 平分宽度
             titleW = currentWidth / CGFloat(titles.count)
@@ -268,7 +275,7 @@ extension IMScrollSegmentView {
         let animationDuration = animated ? 0.3 : 0.0
         UIView.animate(withDuration: animationDuration) {
             // 设置文字颜色
-            oldLabel.textColor = self.segmentStyle.titleSelectColor
+            oldLabel.textColor = self.segmentStyle.titleNormalColor
             currentLabel.textColor = self.segmentStyle.titleSelectColor
             
             // 缩放文字
@@ -382,6 +389,7 @@ extension IMScrollSegmentView {
 }
 
 extension IMScrollSegmentView {
+    
     public func selectedIndex(_ index: Int, animated: Bool) {
         if index < 0 || index >= titles.count {
             return
