@@ -19,6 +19,72 @@ class IMScrollPageView: UIView {
         }
     }
 
-    private var segmentView: IMScrollSegmentView!
-//    private var contentView: c
+    private var segView: IMScrollSegmentView!
+    private var contentView: IMContentView!
+    private var titlesArray: [String] = []
+    /// 所有的子控制器
+    private var childVcs: [UIViewController] = []
+    ///  当前呈现子控制器
+    public var currentChildVC: UIViewController {
+        return contentView.currentChildVC
+    }
+    /// 这里使用weak避免循环引用
+    private weak var parentViewController: UIViewController?
+    
+    public init(frame: CGRect, segmentStyle: IMSegmentStyle, titles: [String], childVcs: [UIViewController], parnetVc: UIViewController) {
+        self.parentViewController = parnetVc
+        self.childVcs = childVcs
+        self.titlesArray = titles
+        self.segmentStyle = segmentStyle
+        assert(childVcs.count == titles.count, "标题的个数必须和子控制器的个数相同")
+        super.init(frame: frame)
+        /// 初始化设置了frame后可以在以后的任何地方直接获取到frame了, 就不必重写layoutsubview()方法在里面设置各个控件的frame
+        commonInit()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func commonInit() {
+        backgroundColor = .white
+        segView = IMScrollSegmentView(frame: CGRect(x: 0, y: 0, width: bounds.size.width, height: 44), titles: titlesArray, segmentStyle: segmentStyle)
+        guard let parentVC = parentViewController else {
+            return
+        }
+        contentView = IMContentView(frame: CGRect(x: 0, y: segmentView.frame.maxY, width: bounds.size.width, height: bounds.size.height - 44), childVCs: childVcs, parentViewController: parentVC)
+        contentView.delegate = self
+        addSubview(segmentView)
+        addSubview(contentView)
+        
+//        segmentView.titleButtonClickClosure = { {[unowned self] (label: UILabel, index: Int) in
+//
+//        }
+    }
+    
+    deinit {
+        parentViewController = nil
+    }
+}
+
+extension IMScrollPageView {
+    
+    public func selectedIndex(selectedIndex: Int, animated: Bool) {
+        segView.selectedIndex(selectedIndex, animated: animated)
+    }
+    
+    public func reloadChildVcsWithNewTitles(_ titles: [String], newChildVcs: [UIViewController]) {
+        self.childVcs = newChildVcs
+        self.titlesArray = titles
+        
+        contentView.reloadAllViewsWithNewChildVCs(newChildVCs: newChildVcs)
+    }
+}
+
+// MARK: - IMContentViewDelegate
+extension IMScrollPageView: IMContentViewDelegate {
+    
+    public var segmentView: IMScrollSegmentView {
+        return segView
+    }
 }

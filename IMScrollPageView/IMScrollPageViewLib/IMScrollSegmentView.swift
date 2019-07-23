@@ -139,7 +139,7 @@ public class IMScrollSegmentView: UIView {
         guard let currentLabel = tapGesture.view as? IMCustomLabel else { return }
         currentIndex = currentLabel.tag
 
-        adjuctUIWhenButtonClick(animated: true)
+        adjustUIWhenButtonClick(animated: true)
     }
     
     func extraButtonClickAction(sender: UIButton) {
@@ -148,6 +148,35 @@ public class IMScrollSegmentView: UIView {
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension IMScrollSegmentView {
+    public func selectedIndex(_ index: Int, animated: Bool) {
+        assert(index <= 0 || index > titles.count, "设置的下标不合法!")
+        if index < 0 || index >= titles.count {
+            return
+        }
+        // 自动调整到相应的位置
+        currentIndex = index
+        
+        // 可以改变设置下标滚动后是否有动画切换效果
+        adjustUIWhenButtonClick(animated: animated)
+    }
+    
+    public func reloadTitlesWithNewTitles(_ titles: [String]) {
+        // 移除所有的scrollView子视图
+        scrollView.subviews.forEach({ $0.removeFromSuperview() })
+        // 移除所有的label相关
+        titlesWidthArray.removeAll()
+        labelsArray.removeAll()
+        
+        // 重新设置UI
+        self.titles = titles
+        setupTitles()
+        setupUI()
+        // default selecte the first tag
+        selectedIndex(0, animated: true)
     }
 }
 
@@ -265,7 +294,7 @@ extension IMScrollSegmentView {
 
 extension IMScrollSegmentView {
     
-    public func adjuctUIWhenButtonClick(animated: Bool) {
+    public func adjustUIWhenButtonClick(animated: Bool) {
         if currentIndex == oldIndex { return }
         let oldLabel = labelsArray[oldIndex]
         let currentLabel = labelsArray[currentIndex]
@@ -387,18 +416,6 @@ extension IMScrollSegmentView {
         }
     }
 }
-
-extension IMScrollSegmentView {
-    
-    public func selectedIndex(_ index: Int, animated: Bool) {
-        if index < 0 || index >= titles.count {
-            return
-        }
-        currentIndex = index
-        adjuctUIWhenButtonClick(animated: true)
-    }
-}
-
 
 /// custom label
 public class IMCustomLabel: UILabel {
