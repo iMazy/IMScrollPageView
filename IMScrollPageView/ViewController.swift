@@ -38,11 +38,9 @@ class ViewController: UIViewController {
 //        let contentView = IMContentView(frame: CGRect(x: 0, y: 150, width: 375, height: 400), childVCs: controllers, parentViewController: self)
 //        contentView.delegate = self
 //        view.addSubview(contentView)
+        
     }
-
-
 }
-
 
 extension ViewController: IMContentViewDelegate {
     

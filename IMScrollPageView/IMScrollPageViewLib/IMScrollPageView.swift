@@ -57,9 +57,9 @@ class IMScrollPageView: UIView {
         addSubview(segmentView)
         addSubview(contentView)
         
-//        segmentView.titleButtonClickClosure = { {[unowned self] (label: UILabel, index: Int) in
-//
-//        }
+        segmentView.titleButtonClickClosure = { [unowned self] (label: UILabel, index: Int) in
+            self.contentView.setContentOffset(offset: CGPoint(x: self.contentView.bounds.size.width * CGFloat(index), y: 0), animated: self.segmentStyle.isAnimatedChangeContent)
+        }
     }
     
     deinit {
@@ -76,7 +76,7 @@ extension IMScrollPageView {
     public func reloadChildVcsWithNewTitles(_ titles: [String], newChildVcs: [UIViewController]) {
         self.childVcs = newChildVcs
         self.titlesArray = titles
-        
+        segView.reloadTitlesWithNewTitles(titles)
         contentView.reloadAllViewsWithNewChildVCs(newChildVCs: newChildVcs)
     }
 }
