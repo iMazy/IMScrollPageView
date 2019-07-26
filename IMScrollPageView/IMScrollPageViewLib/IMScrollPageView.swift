@@ -52,14 +52,11 @@ class IMScrollPageView: UIView {
         guard let parentVC = parentViewController else {
             return
         }
+        segView.delegate = self
         contentView = IMContentView(frame: CGRect(x: 0, y: segmentView.frame.maxY, width: bounds.size.width, height: bounds.size.height - 44), childVCs: childVcs, parentViewController: parentVC)
         contentView.delegate = self
         addSubview(segmentView)
         addSubview(contentView)
-        
-        segmentView.titleButtonClickClosure = { [unowned self] (label: UILabel, index: Int) in
-            self.contentView.setContentOffset(offset: CGPoint(x: self.contentView.bounds.size.width * CGFloat(index), y: 0), animated: self.segmentStyle.isAnimatedChangeContent)
-        }
     }
     
     deinit {
@@ -78,6 +75,15 @@ extension IMScrollPageView {
         self.titlesArray = titles
         segView.reloadTitlesWithNewTitles(titles)
         contentView.reloadAllViewsWithNewChildVCs(newChildVCs: newChildVcs)
+    }
+}
+
+// MARK: - IMScrollSegmentViewDelegate
+extension IMScrollPageView: IMScrollSegmentViewDelegate {
+    
+    func scrollSegmentViewTitleButtonClick(with label: UILabel, index: Int) {
+        self.contentView.setContentOffset(offset: CGPoint(x: self.contentView.bounds.size.width * CGFloat(index), y: 0),
+                                          animated: self.segmentStyle.isAnimatedChangeContent)
     }
 }
 

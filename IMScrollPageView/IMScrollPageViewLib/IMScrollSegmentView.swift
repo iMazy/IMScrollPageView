@@ -8,13 +8,18 @@
 
 import UIKit
 
+protocol IMScrollSegmentViewDelegate: class {
+    func scrollSegmentViewTitleButtonClick(with label: UILabel, index: Int)
+}
+
 public class IMScrollSegmentView: UIView {
 
     public var segmentStyle: IMSegmentStyle
     /// 所有的标题
     private var titles: [String]
     
-    public var titleButtonClickClosure: ((_ label: UILabel, _ index: Int) -> Void)?
+    weak var delegate: IMScrollSegmentViewDelegate?
+//    public var titleButtonClickClosure: ((_ label: UILabel, _ index: Int) -> Void)?
     @objc public var extraButtonClickClosure: ((_ extraButton: UIButton) -> Void)?
     
     private var currentWidth: CGFloat = 0
@@ -328,7 +333,7 @@ extension IMScrollSegmentView {
             }
         }
         oldIndex = currentIndex
-        titleButtonClickClosure?(currentLabel, currentIndex)
+        delegate?.scrollSegmentViewTitleButtonClick(with: currentLabel, index: currentIndex)
     }
     
     // 手动滚动时需要提供动画效果
