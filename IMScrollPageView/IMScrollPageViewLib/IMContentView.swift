@@ -8,6 +8,25 @@
 
 import UIKit
 
+public class IMCustomGestureCollectionView: UICollectionView {
+    
+    var panGestureShouldBeginClosure: ((_ panGesture: UIPanGestureRecognizer, _ collectionView: IMCustomGestureCollectionView) -> Bool)?
+    
+    func setupPanGestureShouldBeginClosure(closure: @escaping (_ panGesture: UIPanGestureRecognizer, _ collectionView: IMCustomGestureCollectionView) -> Bool) {
+        panGestureShouldBeginClosure = closure
+    }
+    
+    override public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        if let panGestureShouldBeginClosure = panGestureShouldBeginClosure, let panGesture = gestureRecognizer as? UIPanGestureRecognizer {
+            return panGestureShouldBeginClosure(panGesture, self)
+        }
+        else {
+            return super.gestureRecognizerShouldBegin(gestureRecognizer)
+        }
+    }
+}
+
+
 class IMContentView: UIView {
 
     static let cellID = "cellid"
@@ -153,8 +172,8 @@ extension IMContentView: UIScrollViewDelegate {
     /// 为了解决在滚动或接着点击title更换的时候因为index不同步而增加了下边的两个代理方法的判断
     ///  滚动减速完成时再更新title的位置
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        let currentIndex = Int(floor(scrollView.contentOffset.x / bounds.size.width))
-        delegate?.contentViewDidEndMoveToIndex(currentIndex: currentIndex)
+        let index = Int(floor(scrollView.contentOffset.x / bounds.size.width))
+        delegate?.contentViewDidEndMoveToIndex(fromIndex: self.currentIndex, toIndex: index)
     }
     
     /// 手指开始拖的时候, 记录此时的offSetX, 并且表示不是点击title切换的内容
@@ -217,9 +236,12 @@ public protocol IMContentViewDelegate: class {
     /// 有默认实现, 不推荐重写
     func contentViewMoveToIndex(fromIndex: Int, toIndex: Int, progress: CGFloat)
     /// 有默认实现, 不推荐重写
-    func contentViewDidEndMoveToIndex(currentIndex: Int)
+    func contentViewDidEndMoveToIndex(fromIndex: Int, toIndex: Int)
     /// 无默认操作, 推荐重写
     func contentViewDidBeginMove()
+    
+    func contentViewShouldBeginPanGesture(panGesture: UIPanGestureRecognizer , collectionView: IMCustomGestureCollectionView) -> Bool
+    
     /// 必须提供的属性
     var segmentView: IMScrollSegmentView { get }
 }
@@ -231,10 +253,14 @@ extension IMContentViewDelegate {
         
     }
     
+    func contentViewShouldBeginPanGesture(panGesture: UIPanGestureRecognizer , collectionView: IMCustomGestureCollectionView) -> Bool {
+        return true
+    }
+    
     // 内容每次滚动完成时调用, 确定title和其他的控件的位置
-    public func contentViewDidEndMoveToIndex(currentIndex: Int) {
-        segmentView.adjustTitleOffSetToCurrentIndex(currentIndex)
-        segmentView.adjustUIWithProgress(1.0, oldIndex: currentIndex, currentIndex: currentIndex)
+    public func contentViewDidEndMoveToIndex(fromIndex: Int, toIndex: Int) {
+        segmentView.adjustTitleOffSetToCurrentIndex(toIndex)
+        segmentView.adjustUIWithProgress(1.0, oldIndex: fromIndex, currentIndex: toIndex)
     }
     
     // 内容正在滚动的时候,同步滚动滑块的控件

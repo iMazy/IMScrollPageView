@@ -89,7 +89,6 @@ extension IMScrollPageView: IMScrollSegmentViewDelegate {
 
 // MARK: - IMContentViewDelegate
 extension IMScrollPageView: IMContentViewDelegate {
-    
     public var segmentView: IMScrollSegmentView {
         return segView
     }

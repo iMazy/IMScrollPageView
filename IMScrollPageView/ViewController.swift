@@ -8,19 +8,59 @@
 
 import UIKit
 
+enum ScrollPageType {
+    case scale_gradient
+    case cover_gradient
+    case scrollbar_gradient
+    case cover_scale_no_gradient
+    case cover_no_gradient_no_scroll
+}
+
 class ViewController: UIViewController {
     
     var segmentTitleView: IMScrollSegmentView!
+    public var pageType: ScrollPageType = .scale_gradient
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let titles = ["首页", "电影", "话剧", "三个字", "hello world"]
+        edgesForExtendedLayout = []
+        view.backgroundColor = .white
+        
+        var titles = ["国内头条", "国际要闻", "趣事", "囧图", "明星八卦", "爱车", "国防要事", "科技频道", "手机专页", "风景图", "段子"]
         var style = IMSegmentStyle()
-        style.bottomLineHeight = 2
-        style.isTitleScroll = true
-        style.titleMargin = 20
-        style.isShowScrollLine = true
+        
+        switch pageType {
+        case .scale_gradient:
+            style.isTitleScale = true
+            style.isTitleScroll = true
+            style.isChangeTitleColorGradual = true
+            
+        case .cover_gradient:
+            style.isTitleScale = true
+            style.isShowCover = true
+            style.isChangeTitleColorGradual = true
+            style.coverBackgroundColor = UIColor.lightGray
+            
+        case .scrollbar_gradient:
+            style.bottomLineHeight = 2
+            style.isTitleScroll = true
+            style.isChangeTitleColorGradual = true
+            style.isShowScrollLine = true
+            style.bottomLineColor = UIColor.lightGray
+        case .cover_scale_no_gradient:
+            style.isTitleScale = true
+            style.isShowCover = true
+            style.isChangeTitleColorGradual = false
+            style.coverBackgroundColor = UIColor.lightGray
+        case .cover_no_gradient_no_scroll:
+            style.bottomLineHeight = 2
+            style.isTitleScroll = true
+            style.titleMargin = 20
+            style.isShowScrollLine = true
+            
+            titles = []
+        }
         
         var controllers: [UIViewController] = []
         for _ in titles.enumerated() {
@@ -29,20 +69,18 @@ class ViewController: UIViewController {
             controllers.append(vc)
         }
         
-        let scrollPage = IMScrollPageView(frame: CGRect(x: 0, y: 100, width: 375, height: 667-150), segmentStyle: style, titles: titles, childVcs: controllers, parnetVc: self)
+        let scrollPage = IMScrollPageView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height),
+                                          segmentStyle: style, titles: titles, childVcs: controllers, parnetVc: self)
         view.addSubview(scrollPage)
-        
-//        segmentTitleView = IMScrollSegmentView(frame: CGRect(x: 0, y: 100, width: 375, height: 40), titles: titles, segmentStyle: style)
-//        view.addSubview(segmentTitleView)
-//
-//        let contentView = IMContentView(frame: CGRect(x: 0, y: 150, width: 375, height: 400), childVCs: controllers, parentViewController: self)
-//        contentView.delegate = self
-//        view.addSubview(contentView)
         
     }
 }
 
 extension ViewController: IMContentViewDelegate {
+    
+    func contentViewDidEndMoveToIndex(currentIndex: Int) {
+        
+    }
     
     var segmentView: IMScrollSegmentView {
         return segmentTitleView

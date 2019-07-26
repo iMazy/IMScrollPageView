@@ -19,7 +19,7 @@ public class IMScrollSegmentView: UIView {
     private var titles: [String]
     
     weak var delegate: IMScrollSegmentViewDelegate?
-//    public var titleButtonClickClosure: ((_ label: UILabel, _ index: Int) -> Void)?
+
     @objc public var extraButtonClickClosure: ((_ extraButton: UIButton) -> Void)?
     
     private var currentWidth: CGFloat = 0
@@ -157,6 +157,7 @@ public class IMScrollSegmentView: UIView {
 }
 
 extension IMScrollSegmentView {
+    
     public func selectedIndex(_ index: Int, animated: Bool) {
         assert(index <= 0 || index > titles.count, "设置的下标不合法!")
         if index < 0 || index >= titles.count {
